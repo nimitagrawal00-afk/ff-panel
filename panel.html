@@ -2,28 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FF Max Control Panel</title>
     <style>
         :root {
             --bg-color: #0a0a0a;
             --card-bg: #141414;
             --text-color: #e0e0e0;
-            --accent-color: #00ff41; /* Neon Green */
+            --accent-color: #00ff41;
             --border-color: #333;
-            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: var(--font-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
+            /* Ensure no scrolling interferes with touch */
+            overflow: hidden; 
         }
 
         .container {
@@ -32,7 +33,7 @@
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 20px;
+            padding: 15px;
             box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
         }
 
@@ -41,20 +42,21 @@
             color: var(--accent-color);
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-bottom: 20px;
+            margin: 0 0 15px 0;
+            font-size: 1.5em;
             text-shadow: 0 0 10px var(--accent-color);
         }
 
         .section {
-            margin-bottom: 20px;
-            padding: 15px;
+            margin-bottom: 15px;
+            padding: 10px;
             border: 1px solid #222;
             border-radius: 8px;
             background: #0f0f0f;
         }
 
         .section-title {
-            font-size: 0.9em;
+            font-size: 0.85em;
             color: #888;
             margin-bottom: 10px;
             text-transform: uppercase;
@@ -65,11 +67,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         label {
             flex: 1;
+            font-size: 0.9em;
         }
 
         input[type="range"] {
@@ -84,6 +87,8 @@
             display: inline-block;
             width: 50px;
             height: 24px;
+            flex-shrink: 0;
+            margin-left: 10px;
         }
 
         .switch input { 
@@ -123,16 +128,17 @@
 
         button {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             background: var(--accent-color);
             color: #000;
             border: none;
             border-radius: 8px;
-            font-size: 1.1em;
+            font-size: 1em;
             font-weight: bold;
             cursor: pointer;
             transition: 0.3s;
             text-transform: uppercase;
+            margin-top: 10px;
         }
 
         button:hover {
@@ -146,20 +152,20 @@
             font-family: monospace;
             padding: 10px;
             word-break: break-all;
-            max-height: 150px;
+            max-height: 100px;
             overflow-y: auto;
             margin-top: 10px;
-            font-size: 0.8em;
+            font-size: 0.7em;
         }
 
         .status-bar {
             display: flex;
             justify-content: space-between;
-            font-size: 0.8em;
+            font-size: 0.75em;
             color: #666;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             border-bottom: 1px solid #222;
-            padding-bottom: 10px;
+            padding-bottom: 5px;
         }
 
         .heart-rate {
@@ -188,13 +194,13 @@
     <div class="section">
         <div class="section-title">Aimbot Configuration</div>
         <div class="control-group">
-            <label>Auto Headshot (Aimbot)</label>
+            <label>Auto Headshot</label>
             <label class="switch">
                 <input type="checkbox" id="aimEnabled" checked>
                 <span class="slider"></span>
             </label>
         </div>
-        <label>FOV Range: <span id="fovValue">90</span>°</label>
+        <label>FOV: <span id="fovValue">90</span>°</label>
         <input type="range" id="fovSlider" min="0" max="180" value="90" oninput="document.getElementById('fovValue').innerText = this.value">
         
         <div class="control-group" style="margin-top:10px;">
@@ -246,11 +252,11 @@
                 <span class="slider"></span>
             </label>
         </div>
-        <label>Fly Speed Multiplier: <span id="flySpeedValue">1.5</span>x</label>
+        <label>Fly Speed: <span id="flySpeedValue">1.5</span>x</label>
         <input type="range" id="flySpeedSlider" min="1" max="5" step="0.1" value="1.5" oninput="document.getElementById('flySpeedValue').innerText = this.value">
 
         <div class="control-group" style="margin-top:10px;">
-            <label>Auto Kill</label>
+            <label>Auto Kill (Tap)</label>
             <label class="switch">
                 <input type="checkbox" id="autoKillEnabled">
                 <span class="slider"></span>
@@ -264,10 +270,19 @@
         Click "Inject Config" to generate payload...
     </div>
 </div>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("FF Master AI Loaded");
 
-    // 1. Auto-Kill / Auto-Tap Logic
+<script>
+    // 1. Listen for Aimbot Toggle Changes
+    document.getElementById('aimEnabled').addEventListener('change', function() {
+        if(this.checked) {
+            console.log("Aimbot ON");
+            // Optional: Add visual feedback or sound here
+        } else {
+            console.log("Aimbot OFF");
+        }
+    });
+
+    // 2. Auto-Kill / Auto-Tap Logic
     let tapInterval = null;
 
     document.getElementById('autoKillEnabled').addEventListener('change', function() {
@@ -307,13 +322,28 @@ document.addEventListener('DOMContentLoaded', function() {
         clearInterval(tapInterval);
     }
 
-    // Optional: Aimbot Toggle (Visual feedback only, unless you add more logic)
-    document.getElementById('aimEnabled').addEventListener('change', function() {
-        if(this.checked) {
-            alert("Aimbot Enabled - Auto-Fire Active");
-        }
-    });
-});
+    // 3. Generate Config Function
+    function generateConfig() {
+        const fov = parseInt(document.getElementById('fovSlider').value);
+        const smooth = parseInt(document.getElementById('smoothInput').value);
+        const flySpeed = parseFloat(document.getElementById('flySpeedSlider').value);
+        const token = Math.random().toString(36).substring(2, 15);
+
+        const config = {
+            "version": "v5.0",
+            "aimbot": { "enabled": document.getElementById('aimEnabled').checked, "fov": fov, "smooth": smooth },
+            "esp": { "enabled": document.getElementById('espEnabled').checked, "health": document.getElementById('showHealth').checked },
+            "fly": { "enabled": document.getElementById('flyEnabled').checked, "speed": flySpeed },
+            "combat": { "autoKill": document.getElementById('autoKillEnabled').checked },
+            "token": token
+        };
+
+        const outputDiv = document.getElementById('jsonOutput');
+        outputDiv.innerText = JSON.stringify(config, null, 4);
+        navigator.clipboard.writeText(JSON.stringify(config));
+        alert("Config Copied!");
+    }
+</script>
 
 </body>
 </html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FF Max Control Panel</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --card-bg: #141414;
+            --text-color: #e0e0e0;
+            --accent-color: #00ff41; /* Neon Green */
+            --border-color: #333;
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px var(--accent-color);
+        }
+
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #222;
+            border-radius: 8px;
+            background: #0f0f0f;
+        }
+
+        .section-title {
+            font-size: 0.9em;
+            color: #888;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .control-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        label {
+            flex: 1;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin-top: 5px;
+            accent-color: var(--accent-color);
+        }
+
+        /* Custom Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #333;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--accent-color);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            box-shadow: 0 0 15px var(--accent-color);
+        }
+
+        .output-box {
+            background: #000;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            font-family: monospace;
+            padding: 10px;
+            word-break: break-all;
+            max-height: 150px;
+            overflow-y: auto;
+            margin-top: 10px;
+            font-size: 0.8em;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #222;
+            padding-bottom: 10px;
+        }
+
+        .heart-rate {
+            color: var(--accent-color);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>FF MAX PANEL v5.0</h1>
+    
+    <div class="status-bar">
+        <span>Status: <span style="color:#0f0">Connected</span></span>
+        <span>Anti-Ban: <span id="antiBanStatus" class="heart-rate">Active</span></span>
+    </div>
+
+    <!-- Aimbot Section -->
+    <div class="section">
+        <div class="section-title">Aimbot Configuration</div>
+        <div class="control-group">
+            <label>Auto Headshot (Aimbot)</label>
+            <label class="switch">
+                <input type="checkbox" id="aimEnabled" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+        <label>FOV Range: <span id="fovValue">90</span>°</label>
+        <input type="range" id="fovSlider" min="0" max="180" value="90" oninput="document.getElementById('fovValue').innerText = this.value">
+        
+        <div class="control-group" style="margin-top:10px;">
+            <label>Smoothness</label>
+            <input type="number" id="smoothInput" value="10" style="width:50px; background:#222; color:#fff; border:1px solid #444;">
+        </div>
+    </div>
+
+    <!-- ESP Section -->
+    <div class="section">
+        <div class="section-title">ESP / Wallhack</div>
+        <div class="control-group">
+            <label>Show ESP Box</label>
+            <label class="switch">
+                <input type="checkbox" id="espEnabled" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="control-group">
+            <label>Show Health</label>
+            <label class="switch">
+                <input type="checkbox" id="showHealth" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="control-group">
+            <label>Show Distance</label>
+            <label class="switch">
+                <input type="checkbox" id="showDistance" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="control-group">
+            <label>Skeleton Lines</label>
+            <label class="switch">
+                <input type="checkbox" id="showSkeleton">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Movement & Combat -->
+    <div class="section">
+        <div class="section-title">Movement & Combat</div>
+        <div class="control-group">
+            <label>Fly Hack</label>
+            <label class="switch">
+                <input type="checkbox" id="flyEnabled">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <label>Fly Speed Multiplier: <span id="flySpeedValue">1.5</span>x</label>
+        <input type="range" id="flySpeedSlider" min="1" max="5" step="0.1" value="1.5" oninput="document.getElementById('flySpeedValue').innerText = this.value">
+
+        <div class="control-group" style="margin-top:10px;">
+            <label>Auto Kill</label>
+            <label class="switch">
+                <input type="checkbox" id="autoKillEnabled">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <button onclick="generateConfig()">INJECT CONFIG</button>
+
+    <div class="output-box" id="jsonOutput">
+        Click "Inject Config" to generate payload...
+    </div>
+</div>
+
+<script>
+    // 1. Listen for Aimbot Toggle Changes
+    document.getElementById('aimEnabled').addEventListener('change', function() {
+        if(this.checked) {
+            window.postMessage({ action: 'start_aim' }, '*');
+        } else {
+            window.postMessage({ action: 'stop_aim' }, '*');
+        }
+    });
+
+    // 2. Auto-Fire / Auto-Kill Logic (Simulates rapid clicks at screen center)
+    setInterval(() => {
+        const autoKillToggle = document.getElementById('autoKillEnabled');
+        if(autoKillToggle && autoKillToggle.checked) {
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            
+            const touchEvent = new TouchEvent('touchstart', {
+                bubbles: true,
+                cancelable: true,
+                touches: [{ clientX: centerX, clientY: centerY }]
+            });
+            
+            document.dispatchEvent(touchEvent);
+        }
+    }, 100);
+
+    function generateConfig() {
+        // Gather values
+        const fov = parseInt(document.getElementById('fovSlider').value);
+        const smooth = parseInt(document.getElementById('smoothInput').value);
+        const flySpeed = parseFloat(document.getElementById('flySpeedSlider').value);
+        
+        // Generate a random token for anti-ban simulation
+        const token = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+        // Construct JSON Object
+        const config = {
+            "version": "v5.0",
+            "aimbot": {
+                "enabled": document.getElementById('aimEnabled').checked,
+                "fov": fov,
+                "smooth": smooth
+            },
+            "esp": {
+                "enabled": document.getElementById('espEnabled').checked,
+                "showHealth": document.getElementById('showHealth').checked,
+                "showDistance": document.getElementById('showDistance').checked,
+                "showSkeleton": document.getElementById('showSkeleton').checked
+            },
+            "fly": {
+                "enabled": document.getElementById('flyEnabled').checked,
+                "speed": flySpeed
+            },
+            "combat": {
+                "autoKill": document.getElementById('autoKillEnabled').checked
+            },
+            "antiBan": {
+                "status": "active",
+                "token": token
+            }
+        };
+
+        // Display Result
+        const outputDiv = document.getElementById('jsonOutput');
+        outputDiv.innerText = JSON.stringify(config, null, 4);
+        
+        // Copy to clipboard
+        navigator.clipboard.writeText(JSON.stringify(config));
+        alert("Config Generated and Copied! App overlay signal dispatched.");
+    }
+</script>
+
+</body>
+</html>

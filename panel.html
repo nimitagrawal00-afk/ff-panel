@@ -2,279 +2,367 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NIMISH PANEL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FF MAX MASTER HUB</title>
     <style>
+        /* CORE STYLES */
         body {
             margin: 0;
             padding: 0;
-            background-color: #0f0f0f;
+            background-color: rgba(10, 10, 15, 0.9);
+            font-family: 'Courier New', monospace;
             color: #00ffcc;
-            font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-        .header {
-            text-align: center;
-            padding: 10px;
-            border-bottom: 2px solid #00ffcc;
-            margin-bottom: 10px;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-            text-shadow: 0 0 10px #00ffcc;
-        }
-        .content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
-        }
-        .card {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 5px;
-            padding: 15px;
-            margin-bottom: 10px;
-            box-shadow: 0 0 5px rgba(0, 255, 204, 0.2);
-        }
-        .card h3 {
-            margin-top: 0;
-            color: #fff;
-        }
-        button {
-            background: #00ffcc;
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-            margin-top: 5px;
-        }
-        button:active {
-            background: #00cccc;
-        }
-        .status {
-            font-size: 12px;
-            color: #666;
-            text-align: center;
-            margin-top: 5px;
-        }
-        /* Floating Window Styles */
-        #floating-window {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 150px;
-            height: 150px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #00ffcc;
-            border-radius: 50%;
-            display: none; /* Hidden by default */
-            z-index: 9999;
-            cursor: move;
             touch-action: none;
         }
-        #floating-window-header {
-            height: 30px;
-            background: #00ffcc;
-            color: #000;
-            text-align: center;
-            line-height: 30px;
-            font-weight: bold;
-            border-radius: 50% 50% 0 0;
+
+        /* FLOATING WINDOW CONTAINER */
+        #overlay-container {
+            position: fixed;
+            top: 50px;
+            left: 20px;
+            width: 320px;
+            max-height: 90vh;
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border: 2px solid #00ffcc;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4), inset 0 0 10px rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(5px);
         }
-        #floating-window-content {
+
+        /* HEADER & DRAG HANDLE */
+        .header {
+            background: #0f3460;
             padding: 10px;
-            color: #fff;
-            font-size: 10px;
-            text-align: center;
-        }
-        .toggle-container {
+            border-bottom: 1px solid #00ffcc;
+            cursor: grab;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
         }
-        .toggle-switch {
+        
+        .header h2 {
+            margin: 0;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px #00ffcc;
+        }
+
+        .close-btn {
+            background: #e94560;
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            line-height: 25px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* SCROLLABLE CONTENT AREA */
+        .content {
+            padding: 15px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        /* SECTION TITLES */
+        .section-title {
+            color: #fff;
+            font-size: 12px;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            border-left: 3px solid #e94560;
+            padding-left: 8px;
+            text-transform: uppercase;
+        }
+
+        /* TOGGLE SWITCHES */
+        .control-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+
+        .label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #ddd;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin-top: 5px;
+            accent-color: #00ffcc;
+        }
+
+        /* CUSTOM TOGGLE SWITCH */
+        .switch {
             position: relative;
-            width: 50px;
-            height: 26px;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
         }
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+        .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
             position: absolute;
             cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background-color: #ccc;
             transition: .4s;
-            border-radius: 34px;
+            border-radius: 20px;
         }
         .slider:before {
             position: absolute;
             content: "";
-            height: 18px;
-            width: 18px;
-            left: 4px;
-            bottom: 4px;
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
             background-color: white;
             transition: .4s;
             border-radius: 50%;
         }
-        input:checked + .slider {
-            background-color: #00ffcc;
+        input:checked + .slider { background-color: #00ffcc; }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* BUTTONS */
+        .action-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, #0f3460, #16213e);
+            border: 1px solid #00ffcc;
+            color: #00ffcc;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-top: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.2s;
         }
-        input:checked + .slider:before {
-            transform: translateX(24px);
+        .action-btn:active {
+            background: #00ffcc;
+            color: #000;
+            transform: scale(0.98);
         }
+
+        /* STATUS INDICATOR */
+        .status-bar {
+            padding: 5px 15px;
+            background: #000;
+            font-size: 10px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #333;
+        }
+        .dot {
+            height: 8px;
+            width: 8px;
+            background-color: #e94560;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot.active { background-color: #00ffcc; box-shadow: 0 0 5px #00ffcc; }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #00ffcc; border-radius: 5px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>NIMISH PANEL</h1>
-            <div class="status">Status: Active | User: Nimish</div>
-        </div>
 
-        <div class="content">
-            <!-- Floating Window Control -->
-            <div class="card">
-                <h3>🔮 Floating Window</h3>
-                <div class="toggle-container">
-                    <span>Show Floating Icon</span>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="floatToggle">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <p style="font-size: 12px; color: #aaa;">Enable to see a floating icon over other apps.</p>
-            </div>
-
-            <!-- Features Section -->
-            <div class="card">
-                <h3>⚡ Features</h3>
-                <button onclick="alert('Aimbot Activated!')">Activate Aimbot</button>
-                <button onclick="alert('ESP Enabled!')">Enable ESP</button>
-                <button onclick="alert('Speed Hack On!')">Speed Hack</button>
-            </div>
-
-            <div class="card">
-                <h3>💎 Diamond Farm</h3>
-                <button onclick="startFarming()">Start Auto-Farm</button>
-                <div id="farmStatus" class="status">Idle</div>
-            </div>
-            
-            <div class="card">
-                <h3>🛠️ Settings</h3>
-                <button onclick="resetSettings()">Reset Panel</button>
-            </div>
-        </div>
+<div id="overlay-container">
+    <!-- Header -->
+    <div class="header" id="drag-handle">
+        <h2>⚡ FF MASTER v9.0</h2>
+        <button class="close-btn" onclick="togglePanel()">✕</button>
     </div>
 
-    <!-- The Actual Floating Window Element -->
-    <div id="floating-window">
-        <div id="floating-window-header">NIMISH</div>
-        <div id="floating-window-content">
-            Tap to Open<br>
-            <small>v6.2</small>
-        </div>
-    </div>
-
-    <script>
-        // Floating Window Logic
-        const floatWindow = document.getElementById('floating-window');
-        const floatToggle = document.getElementById('floatToggle');
-        let isDragging = false;
-        let offsetX, offsetY;
-
-        floatToggle.addEventListener('change', function() {
-            if(this.checked) {
-                floatWindow.style.display = 'block';
-                // Try to request overlay permission if needed (Android 23+)
-                // Note: In a pure HTML/JS wrapper, this often requires a custom Android Activity 
-                // to handle SYSTEM_ALERT_WINDOW properly. 
-                // For now, this just shows it within the WebView or as a DOM element.
-                alert("Floating Window Enabled!");
-            } else {
-                floatWindow.style.display = 'none';
-            }
-        });
-
-        // Dragging Logic for the Floating Window
-        const header = document.getElementById('floating-window-header');
+    <!-- Content -->
+    <div class="content">
         
-        header.addEventListener('mousedown', startDrag);
-        header.addEventListener('touchstart', startDrag, {passive: false});
+        <!-- VISUAL HACKS -->
+        <div class="section-title">Visual Overrides</div>
+        
+        <div class="control-row">
+            <span class="label">ESP Player Box</span>
+            <label class="switch"><input type="checkbox" checked onchange="log('ESP Box')"><span class="slider"></span></label>
+        </div>
+        <div class="control-row">
+            <span class="label">Skeleton Lines</span>
+            <label class="switch"><input type="checkbox" checked onchange="log('Skeleton')"><span class="slider"></span></label>
+        </div>
+        <div class="control-row">
+            <span class="label">Wall Hack (Full)</span>
+            <label class="switch"><input type="checkbox" onchange="log('Wallhack')"><span class="slider"></span></label>
+        </div>
+        <div class="control-row">
+            <span class="label">Show HP Bar</span>
+            <label class="switch"><input type="checkbox" checked onchange="log('HP Bar')"><span class="slider"></span></label>
+        </div>
 
-        function startDrag(e) {
-            e.preventDefault();
-            isDragging = true;
-            const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
-            const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
-            
-            offsetX = clientX - floatWindow.offsetLeft;
-            offsetY = clientY - floatWindow.offsetTop;
+        <!-- COMBAT -->
+        <div class="section-title">Combat Engine</div>
 
-            document.addEventListener('mousemove', drag);
-            document.addEventListener('mouseup', stopDrag);
-            document.addEventListener('touchmove', drag, {passive: false});
-            document.addEventListener('touchend', stopDrag);
+        <div class="control-row">
+            <span class="label">Auto Headshot</span>
+            <label class="switch"><input type="checkbox" checked onchange="log('Headshot')"><span class="slider"></span></label>
+        </div>
+        <div class="control-row">
+            <span class="label">Aim Assist (Fly)</span>
+            <label class="switch"><input type="checkbox" onchange="log('Aim Assist')"><span class="slider"></span></label>
+        </div>
+        <div class="control-row">
+            <span class="label">Auto Kill (Rage)</span>
+            <label class="switch"><input type="checkbox" onchange="log('Rage Mode')"><span class="slider"></span></label>
+        </div>
+        
+        <div style="margin-top:10px;">
+            <span class="label">Fov / Sensitivity</span>
+            <input type="range" min="0" max="100" value="85" oninput="updateRange(this)">
+        </div>
+
+        <!-- FARMING -->
+        <div class="section-title">Resource Farm</div>
+
+        <div class="control-row">
+            <span class="label">Diamond Farm</span>
+            <label class="switch"><input type="checkbox" onchange="log('Diamond Farm')"><span class="slider"></span></label>
+        </div>
+        <div class="control-row">
+            <span class="label">Auto Loot</span>
+            <label class="switch"><input type="checkbox" checked onchange="log('Auto Loot')"><span class="slider"></span></label>
+        </div>
+        <div class="control-row">
+            <span class="label">Speed Hack</span>
+            <label class="switch"><input type="checkbox" onchange="log('Speed')"><span class="slider"></span></label>
+        </div>
+
+        <!-- CONFIG -->
+        <div class="section-title">Configuration</div>
+        <button class="action-btn" onclick="applyConfig()">Inject Config</button>
+        <button class="action-btn" style="border-color:#e94560; color:#e94560;" onclick="resetAll()">Reset All</button>
+
+    </div>
+
+    <!-- Footer Status -->
+    <div class="status-bar">
+        <span>Status: <span id="status-text" style="color:#00ffcc">ACTIVE</span></span>
+        <span>Ping: <span id="ping-val">24ms</span></span>
+        <span class="dot active"></span>
+    </div>
+</div>
+
+<script>
+    // DRAG FUNCTIONALITY
+    const container = document.getElementById("overlay-container");
+    const header = document.getElementById("drag-handle");
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    header.addEventListener("mousedown", startDrag);
+    header.addEventListener("touchstart", startDrag, {passive: false});
+
+    function startDrag(e) {
+        isDragging = true;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        offsetX = container.offsetLeft - clientX;
+        offsetY = container.offsetTop - clientY;
+        
+        document.addEventListener("mousemove", drag);
+        document.addEventListener("touchmove", drag, {passive: false});
+        document.addEventListener("mouseup", stopDrag);
+        document.addEventListener("touchend", stopDrag);
+    }
+
+    function drag(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        container.style.left = (clientX + offsetX) + "px";
+        container.style.top = (clientY + offsetY) + "px";
+    }
+
+    function stopDrag() {
+        isDragging = false;
+        document.removeEventListener("mousemove", drag);
+        document.removeEventListener("touchmove", drag);
+        document.removeEventListener("mouseup", stopDrag);
+        document.removeEventListener("touchend", stopDrag);
+    }
+
+    // UI FUNCTIONS
+    function togglePanel() {
+        const content = document.querySelector('.content');
+        const status = document.querySelector('.status-bar');
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            status.style.display = 'flex';
+        } else {
+            content.style.display = 'none';
+            status.style.display = 'none';
         }
+    }
 
-        function drag(e) {
-            if (!isDragging) return;
-            const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
-            const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-            
-            floatWindow.style.left = (clientX - offsetX) + 'px';
-            floatWindow.style.top = (clientY - offsetY) + 'px';
-            floatWindow.style.right = 'auto'; // Clear right positioning when dragging
-            floatWindow.style.bottom = 'auto';
+    function log(action) {
+        console.log(`[INJECTED] ${action}`);
+        // Visual feedback
+        const btn = event.target.closest('.control-row') ? event.target.closest('.control-row').querySelector('.label') : null;
+        if(btn) {
+            const originalColor = btn.style.color;
+            btn.style.color = "#00ffcc";
+            setTimeout(() => btn.style.color = originalColor, 200);
         }
+    }
 
-        function stopDrag() {
-            isDragging = false;
-            document.removeEventListener('mousemove', drag);
-            document.removeEventListener('mouseup', stopDrag);
-            document.removeEventListener('touchmove', drag);
-            document.removeEventListener('touchend', stopDrag);
-        }
+    function updateRange(el) {
+        // Simulate FOV change
+        console.log(`FOV Updated: ${el.value}`);
+    }
 
-        // Feature Functions
-        function startFarming() {
-            const status = document.getElementById('farmStatus');
-            status.textContent = "Farming...";
-            status.style.color = "#00ffcc";
+    function applyConfig() {
+        const btn = document.querySelector('.action-btn');
+        btn.innerText = "APPLYING...";
+        btn.style.background = "#00ffcc";
+        btn.style.color = "#000";
+        
+        setTimeout(() => {
+            btn.innerText = "CONFIG LOADED ✓";
             setTimeout(() => {
-                status.textContent = "Farm Complete! Diamonds Added.";
-                setTimeout(() => {
-                    status.textContent = "Idle";
-                    status.style.color = "#666";
-                }, 3000);
-            }, 2000);
-        }
+                btn.innerText = "Inject Config";
+                btn.style.background = "";
+                btn.style.color = "";
+            }, 1500);
+        }, 800);
+    }
 
-        function resetSettings() {
-            if(confirm("Reset all settings?")) {
-                localStorage.clear();
-                location.reload();
-            }
-        }
-    </script>
+    function resetAll() {
+        const inputs = document.querySelectorAll('input[type="checkbox"]');
+        inputs.forEach(input => input.checked = false);
+        alert("System Reset Complete.");
+    }
+
+    // Fake Ping Generator
+    setInterval(() => {
+        const ping = Math.floor(Math.random() * 40) + 15;
+        document.getElementById('ping-val').innerText = ping + "ms";
+    }, 2000);
+
+</script>
+
 </body>
 </html>
